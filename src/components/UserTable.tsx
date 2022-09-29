@@ -2,6 +2,7 @@ import axios, { AxiosError } from "axios";
 import React, { useEffect, useState } from "react";
 import {IGetUsers} from '../model'
 import AddUserPage from "./pages/AddUserPage";
+import HeadTable from "./pages/HeadTable";
 import Pagination from "./Pagination";
 
 const UserTable = () => {
@@ -9,7 +10,7 @@ const UserTable = () => {
     const [data, setData] = useState<IGetUsers[]>([])
 
     const [loading, setLoading] = useState<boolean>(false)
-    const [sortIdArrow, setArrow] = useState<boolean>(true)
+
 
     const [currentPage, setCurrentPage] = useState<any>(1)
     const [countriesPerPage] = useState<any>(7)
@@ -43,32 +44,6 @@ const UserTable = () => {
 
     }, [])
 
-    const filterIdHundler = () => {
-        setArrow(prev => !prev)
-        if (sortIdArrow) {
-            return  data.sort(sortIndDown)
-        } else {
-            return  data.sort(sortInId)
-        }
-
-    }
-
-    const sortIndDown = (a: any, b: any) => {
-        if (a.id > b.id) {
-            return -1
-        } else {
-            return 1
-        }
-    }
-
-    const sortInId = (a: any, b: any) => {
-        if (a.id > b.id) {
-            return 1
-        } else {
-            return -1
-        }
-    }
-
 
     const lastCountryIndex = currentPage * countriesPerPage;
     const firstCountryIndex = lastCountryIndex - countriesPerPage
@@ -97,53 +72,23 @@ const UserTable = () => {
             
 
             <button type="button" className="btn btn-outline-primary" 
-            onClick={() => setActiveAdd(prev => !prev)}>Add user +
+                    onClick={() => setActiveAdd(prev => !prev)}>Add user +
             </button>
 
-            { activeAdd && <AddUserPage setActiveAdd={setActiveAdd} addUser={addUser} /> }
+            { activeAdd && <AddUserPage setActiveAdd={setActiveAdd}
+                                        addUser={addUser} 
+                                        
+            /> }
 
             <table className="table ">
-                <thead className="thead-dark">
-                <tr>
-                    <th style={{cursor: 'pointer'}} scope="col">
-                        { sortIdArrow
-                            ? <i onClick={filterIdHundler} className="bi bi-caret-down-fill">#</i>
-                            : <i onClick={filterIdHundler} className="bi bi-caret-up-fill">#</i>
-                        }
-                        <input type='string' className="input-group" value={filterId}
-                               onChange={(e: any) => setFilterId(e.target.value)}
-                        />
-                    </th>
-                    <th scope="col">
-                        firstName
-                        <input type='text' value={filterName} className="input-group" onChange={(e: any) => setFilterName(e.target.value)} />
-                    </th>
-
-                    <th scope="col">
-                        lastName
-                        <input value={filterLastName} type='text' className="input-group"
-                               onChange={(e: any) => setLastName(e.target.value)}
-                        />
-                    </th>
-
-                    <th scope="col">
-                        email
-                        <input type='text' className="input-group"
-                               value={filterEmail}
-                               onChange={(e: any) => setFilterEmail(e.target.value)}
-                        />
-                    </th>
-
-                    <th scope="col">
-                        phone
-                        <input type='text' className="input-group"
-                               value={filterPhone}
-                               onChange={(e: any) => setFilterPhone(e.target.value)}
-                        />
-                    </th>
-
-                </tr>
-                </thead>
+            <HeadTable  setData={setData}
+                        data={data}
+                        setFilterName={setFilterName}
+                        setLastName={setLastName}
+                        setFilterId={setFilterId}
+                        setFilterEmail={setFilterEmail}
+                        setFilterPhone={setFilterPhone}
+             />
 
                 {
                     currentCountry.filter((name: any) => {
