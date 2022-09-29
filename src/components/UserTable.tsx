@@ -2,6 +2,7 @@ import axios, { AxiosError } from "axios";
 import React, { useEffect, useState } from "react";
 import {IGetUsers} from '../model'
 import AddUserPage from "./pages/AddUserPage";
+import CurrentUserInfo from "./pages/CurrentUserInfo";
 import HeadTable from "./pages/HeadTable";
 import Pagination from "./Pagination";
 
@@ -61,16 +62,21 @@ const UserTable = () => {
         setActiveAdd(false)
     }
 
+    const filterAll = (item:any, a: any, b: any) => {
+        if (a.trim() === '') {
+            return item
+        } else if (item.b.toLowerCase().includes(a.toLowerCase())){
+            return item
+        }
+    }
 
     return (
 
 
 
         <div className="container pt-5">
-
             {loading && <div className="text-center ">Loading ...</div>}
             
-
             <button type="button" className="btn btn-outline-primary" 
                     onClick={() => setActiveAdd(prev => !prev)}>Add user +
             </button>
@@ -91,35 +97,21 @@ const UserTable = () => {
              />
 
                 {
-                    currentCountry.filter((name: any) => {
-                        if (filterName.trim() === '') {
-                            return name
-                        } else if (name.firstName.toLowerCase().includes(filterName.toLowerCase())) {
-                            return name
-                        }
-                    }).filter((lName: any) => {
-                        if (filterLastName.trim() === ''){
-                            return lName
-                        } else if (lName.lastName.toLowerCase().includes(filterLastName.toLowerCase())) {
-                            return lName
-                        }
-                    }).filter((id: any) => {
-                        if (filterId.trim() === '') {
-                            return id
-                        } else if (id.id.toString().toLowerCase().includes(filterId.toLowerCase())) {
-                            return Number(id.id)
-                        }
-                    }).filter((email: any) => {
-                        if (filterEmail.trim() === '') {
-                            return email
-                        } else if (email.email.toLowerCase().includes(filterEmail.toLowerCase())) {
-                            return email.email
-                        }
-                    }).filter((phone: any) => {
-                        if (filterPhone.trim() === '') {
-                            return phone
-                        } else if (phone.phone.toLowerCase().includes(filterPhone.toLowerCase())) {
-                            return phone.phone
+                    currentCountry.filter((item: any) => {
+                        if ((filterName.trim() === '')     ||
+                           (filterLastName.trim() === '')  ||
+                           (filterId.trim() === '')        ||
+                           (filterEmail.trim() === '')     ||
+                           (filterPhone.trim() === '')
+                        ) {
+                            return item
+                        } else if ((item.firstName.toLowerCase().includes(filterName.toLowerCase()))   ||
+                                  (item.lastName.toLowerCase().includes(filterLastName.toLowerCase())) ||
+                                  (item.id.toString().toLowerCase().includes(filterId.toLowerCase()))  ||
+                                  (item.email.toLowerCase().includes(filterEmail.toLowerCase()))       ||
+                                  (item.phone.toLowerCase().includes(filterPhone.toLowerCase()))
+                        ) {        
+                            return item
                         }
                     }).map((item) => {
                         return (
@@ -142,13 +134,7 @@ const UserTable = () => {
                         setCurrentPage={setCurrentPage}
                         currentPage={currentPage}
             />
-            {currentUser && <div>
-                <p><b>id:</b> {currentUser.id}</p>
-                <p><b>First Name:</b> {currentUser.firstName}</p>
-                <p><b>Last Name: </b>{currentUser.lastName}</p>
-                <p><b>Email: </b>{currentUser.email}</p>
-                <p><b>Phone: </b>{currentUser.phone}</p>
-            </div>}
+            {currentUser && <CurrentUserInfo currentUser={currentUser} />}
         </div>
     )
 }
